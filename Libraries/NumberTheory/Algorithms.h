@@ -15,7 +15,7 @@
 
 namespace nt {
 
-    // CHECK: (DS) - Why do we need this?
+    // FIXME: (DS) - Why do we need this?
     using std::gcd;
     using std::lcm;
 
@@ -46,7 +46,7 @@ namespace nt {
         static_assert(std::is_integral_v<V>, "power modulo must be integer types");
         static_assert(!std::is_same_v<std::remove_cv_t<V>, bool>, "power modulo must not be boolean types");
 
-        // CHECK: (DS) - Is it true, that (a ^ n) mod m equals to (a mod m) ^ (n mod m)
+        // FIXME: (DS) - Is it true, that (a ^ n) mod m equals to (a mod m) ^ (n mod m)
         Modular modular_a(a, mod), modular_n(n, mod);
         return power(modular_a, modular_n);
     }
@@ -69,6 +69,9 @@ namespace nt {
         }
         return true;
     }
+
+    // TODO: add primality test - Solovay-Strassen - O(k lon^3 n)
+    // https://www.geeksforgeeks.org/primality-test-set-4-solovay-strassen/?ref=lbp
 
     template<class T, class U, class K = std::common_type_t<T, U>>
     constexpr K gcd(T a, U b) {
