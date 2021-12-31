@@ -1,3 +1,9 @@
+#*
+#* Created by flashbeard.
+#* On 31.12.2021
+#* number-theory
+#*
+
 cmake_minimum_required(VERSION 3.20)
 project(NumberTheoryLibrary)
 
