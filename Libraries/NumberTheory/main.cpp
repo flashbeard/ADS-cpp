@@ -6,7 +6,9 @@
 
 #include <iostream>
 #include "Everything.h"
+#include <vector>
 
+std::vector<int> v;
 int main() {
 //    int a = 5, n = 3;
 //    auto result = nt::power(a, n);
