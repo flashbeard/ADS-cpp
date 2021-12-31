@@ -21,11 +21,13 @@ namespace nt {
 
     template<class M, class N, class Type = std::common_type_t<M, N>>
     constexpr Type power(M a, N n) {
-        static_assert(std::is_integral_v<M>, "power base argument must be an integer");
-        static_assert(!std::is_same_v<std::remove_cv_t<M>, bool>, "power base argument must not be a bool");
+        static_assert(std::is_integral_v<M>, "power base must be an integer");
+        static_assert(!std::is_same_v<std::remove_cv_t<M>, bool>, "power base must not be a boolean");
 
-        static_assert(std::is_integral_v<N>, "power exponent argument must be an integer");
-        static_assert(!std::is_same_v<std::remove_cv_t<N>, bool>, "power exponent argument must not be a bool");
+        static_assert(std::is_integral_v<N>, "power exponent must be an integer");
+        static_assert(!std::is_same_v<std::remove_cv_t<N>, bool>, "power exponent must not be a boolean");
+
+        static_assert(n >= 0, "power exponent must not be negative");
 
         Type result = 1;
 
@@ -43,13 +45,13 @@ namespace nt {
     }
 
     template<class M, class N, class K>
-    constexpr std::common_type_t<M, N, K> binpow(M a, N n, K mod) {
-        static_assert(std::is_integral_v<K>, "power modulo argument must be an integer");
-        static_assert(!std::is_same_v<std::remove_cv_t<K>, bool>, "power modulo argument must not be a bool");
+    constexpr std::common_type_t<M, N, K> power(M a, N n, K mod) {
+        static_assert(std::is_integral_v<K>, "power modulo must be an integer");
+        static_assert(!std::is_same_v<std::remove_cv_t<K>, bool>, "power modulo must not be a boolean");
 
         // CHECK: (DS) - Is it true, that (a ^ n) mod m equals to (a mod m) ^ (n mod m)
         Modular modular_a(a, mod), modular_n(n, mod);
-        return binpow(modular_a, modular_n);
+        return power(modular_a, modular_n);
     }
 
 }
