@@ -40,7 +40,7 @@ namespace nt {
         static_assert(std::is_integral_v<K>, "binpow arguments are integers");
         static_assert(!std::is_same_v<std::remove_cv_t<K>, bool>, "binpow arguments are not bools");
 
-        Modular modular_a = a(mod), modular_n = n(mod);
+        Modular modular_a(a, mod), modular_n(n, mod);
         return binpow(modular_a, modular_n);
     }
 
