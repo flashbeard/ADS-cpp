@@ -1,3 +1,9 @@
+/*
+ * Created by flashbeard.
+ * On 31.12.2021
+ * number-theory
+ */
+
 #ifndef TEST_MODULAR_H
 #define TEST_MODULAR_H
 
