@@ -8,7 +8,6 @@
 #include "Everything.h"
 #include <vector>
 
-std::vector<int> v;
 int main() {
 //    int a = 5, n = 3;
 //    auto result = nt::power(a, n);
@@ -23,11 +22,13 @@ int main() {
 //    auto result = nt::power(a, n);
 //    std::cout << typeid(result).name() << ' ' << result << std::endl;
 //
-    int mod = 6;
-    nt::Modular a(10, mod), b(12, mod);
-    std::cout << a << std::endl;
-    a = 5;
-    std::cout << a << std::endl;
-    a = b;
-    std::cout << a << std::endl;
+//    constexpr int md = 13;
+//    using Mint = nt::Modular<md>;
+//
+//    Mint a = 5;
+//    int n = 3;
+//
+//    auto res = nt::power(a, n);
+//
+//    std::cout << typeid(res).name() << std::endl; // N2nt7ModularILi13EEE
 }

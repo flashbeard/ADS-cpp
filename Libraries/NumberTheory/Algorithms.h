@@ -24,12 +24,14 @@ namespace nt {
         static_assert(std::is_integral_v<K>, "power arguments must be integer types");
         static_assert(!std::is_same_v<std::remove_cv_t<K>, bool>, "power arguments must not be boolean types");
 
-        static_assert(n >= 0, "power exponent must not be negative");
+        if (n < 0) {
+            throw std::runtime_error("power exponent must not be negative");
+        }
 
         K result = 1;
 
         while (n) {
-            if (n & 1) {
+            if (n % 2) {
                 result *= a;
                 --n;
             } else {
@@ -41,18 +43,8 @@ namespace nt {
         return result;
     }
 
-    template<class T, class U, class V, class K = std::common_type_t<T, U, V>>
-    constexpr K power(T a, U n, V mod) {
-        static_assert(std::is_integral_v<V>, "power modulo must be integer types");
-        static_assert(!std::is_same_v<std::remove_cv_t<V>, bool>, "power modulo must not be boolean types");
-
-        // FIXME: (DS) - Is it true, that (a ^ n) mod m equals to (a mod m) ^ (n mod m)
-        Modular modular_a(a, mod), modular_n(n, mod);
-        return power(modular_a, modular_n);
-    }
-
     template<class T>
-    bool is_power_of_2(T x) {
+    bool is_power_of_2(const T &x) {
         static_assert(std::is_integral_v<T>, "number must be integer type");
         static_assert(!std::is_same_v<std::remove_cv_t<T>, bool>, "number must not be boolean type");
 
@@ -60,7 +52,7 @@ namespace nt {
     }
 
     template<class T>
-    bool is_prime(T x) {
+    bool is_prime(const T &x) {
         if (x == 2 || x == 3 || x == 5 || x == 7 || x == 11 || x == 13 || x == 17 || x == 23 || x == 29) return true;
         if (x < 30 || (x & 1) == 0) return false;
         T d = 3;
@@ -75,8 +67,9 @@ namespace nt {
 
     template<class T, class U, class K = std::common_type_t<T, U>>
     constexpr K gcd(T a, U b) {
-        static_assert((std::is_integral_v<K>), "gcd arguments must be integer types");
+        // TODO: add fold expression - gcd(6, 6, 6, 3, ..., 9) = ...
 
+        static_assert((std::is_integral_v<K>), "gcd arguments must be integer types");
         static_assert((!std::is_same_v<std::remove_cv_t<K>, bool>), "gcd arguments must not be bool types" );
 
         if (a < 0) a = -a;
