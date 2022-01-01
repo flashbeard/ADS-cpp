@@ -81,7 +81,54 @@ namespace nt {
 
 #pragma region ArithmeticOperators
 
+        Modular operator+(Modular_m &other) {
+            T value = this->m_value + other.m_value;
+            return normalize(value);
+        }
 
+        void operator+=(Modular_m &other) {
+            this = this + other;
+        }
+
+        Modular operator-(Modular_m &other) {
+            T value = this->m_value - other.m_value;
+            return normalize(value);
+        }
+
+        void operator-=(Modular_m &other) {
+            this = this - other;
+        }
+
+        Modular operator*(Modular_m &other) {
+            T result = 0;
+            T a = this->m_value;
+            T b = other.m_value;
+            while(b) {
+                if(b & 1) {
+                    result += a;
+                    result %= mod();
+                }
+                b >>= 1;
+                if(a < mod() - a) {
+                    a <<= 1;
+                } else {
+                    a -= (mod() - a);
+                }
+            }
+            return result;
+        }
+
+        void operator*=(Modular_m &other) {
+            this = this * other;
+        }
+
+        Modular operator/(Modular_m &other) {
+            // this * (other ^ (mod() - 2))
+        }
+
+        void operator/=(Modular_m &other) {
+            this = this / other;
+        }
 
 #pragma endregion ArithmeticOperators
 
@@ -113,6 +160,7 @@ namespace nt {
 
 }
 
+// TODO: (DS) - add custom type traits
 namespace std {
     template<auto M>
     struct __is_integral_helper<nt::Modular<M>> : public true_type {
