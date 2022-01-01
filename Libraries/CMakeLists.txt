@@ -13,6 +13,7 @@ add_library(NumberTheoryLibrary
         NumberTheory/Modular.h
         NumberTheory/Modular.cpp
         NumberTheory/Algorithms.h
-        NumberTheory/Algorithms.cpp)
+        NumberTheory/Algorithms.cpp
+        NumberTheory/nt_type_traits.h)
 add_executable(NumberTheoryDemo NumberTheory/main.cpp)
 target_link_libraries(NumberTheoryDemo NumberTheoryLibrary)

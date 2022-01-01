@@ -21,13 +21,13 @@ int main() {
 //    auto result = nt::power(a, n);
 //    std::cout << typeid(result).name() << ' ' << result << std::endl;
 //
-//    constexpr int md = 13;
-//    using Mint = nt::Modular<md>;
-//
-//    Mint a = 5;
-//    int n = 3;
-//
-//    auto res = nt::power(a, n);
-//
-//    std::cout << typeid(res).name() << std::endl; // N2nt7ModularILi13EEE
+    constexpr int md = 13;
+    using Mint = nt::Modular<md>;
+
+    Mint a = 5;
+    int n = 3;
+
+    auto res = nt::power(a, n);
+
+    std::cout << typeid(res).name() << std::endl; // N2nt7ModularILi13EEE
 }

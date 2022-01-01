@@ -8,5 +8,6 @@
 
 #include "Algorithms.h"
 #include "Modular.h"
+#include "nt_type_traits.h"
 
 #endif //ADS_CPP_NUMBERTHEORY_H

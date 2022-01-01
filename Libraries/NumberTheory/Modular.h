@@ -9,6 +9,8 @@
 #include <type_traits>
 #include <iostream>
 
+#include "nt_type_traits.h"
+
 namespace nt {
 
     template<auto M>
@@ -19,8 +21,7 @@ namespace nt {
 
         using Modular_m = Modular<M>;
 
-        static_assert(std::is_integral_v<T>, "Modular number must be an integer type");
-        static_assert(!std::is_same_v<std::remove_cv_t<T>, bool>, "Modular number must not be a boolean type");
+        static_assert(is_integral_v<T>, "Modular number must be integer types");
 
 #pragma region Constructors
 
@@ -102,13 +103,13 @@ namespace nt {
             T result = 0;
             T a = this->m_value;
             T b = other.m_value;
-            while(b) {
-                if(b & 1) {
+            while (b) {
+                if (b & 1) {
                     result += a;
                     result %= mod();
                 }
                 b >>= 1;
-                if(a < mod() - a) {
+                if (a < mod() - a) {
                     a <<= 1;
                 } else {
                     a -= (mod() - a);
@@ -134,7 +135,6 @@ namespace nt {
 #pragma region ComparisonOperators
 
 
-
 #pragma endregion ComparisonOperators
 
 #pragma region IO
@@ -157,13 +157,10 @@ namespace nt {
         T m_value;
     };
 
-}
-
-// TODO: (DS) - add custom type traits
-namespace std {
     template<auto M>
-    struct __is_integral_helper<nt::Modular<M>> : public true_type {
+    struct __is_integral_helper<Modular<M>> : public std::true_type {
     };
+
 }
 
 #endif //TEST_MODULAR_H

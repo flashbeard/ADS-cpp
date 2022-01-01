@@ -11,17 +11,13 @@
 #include <algorithm>
 
 #include "Modular.h"
+#include "nt_type_traits.h"
 
 namespace nt {
 
-    // FIXME: (DS) - Why do we need this?
-    using std::gcd;
-    using std::lcm;
-
     template<class T, class U, class K = std::common_type_t<T, U>>
     constexpr K power(T a, U n) {
-        static_assert(std::is_integral_v<K>, "power arguments must be integer types");
-        static_assert(!std::is_same_v<std::remove_cv_t<K>, bool>, "power arguments must not be boolean types");
+        static_assert(is_integral_v<K>, "power arguments must be integer types");
 
         if (n < 0) {
             throw std::runtime_error("power exponent must not be negative");
@@ -44,8 +40,7 @@ namespace nt {
 
     template<class T>
     bool is_power_of_2(const T &x) {
-        static_assert(std::is_integral_v<T>, "number must be integer type");
-        static_assert(!std::is_same_v<std::remove_cv_t<T>, bool>, "number must not be boolean type");
+        static_assert(is_integral_v<T>, "is_power_of_2 arguments must be integer types");
 
         return x && !(x & (x - 1));
     }
@@ -66,10 +61,9 @@ namespace nt {
 
     template<class T, class U, class K = std::common_type_t<T, U>>
     constexpr K gcd(T a, U b) {
-        // TODO: add fold expression - gcd(6, 6, 6, 3, ..., 9) = ...
+        // TODO: (DP) - add fold expression - gcd(6, 6, 6, 3, ..., 9) = ...
 
-        static_assert((std::is_integral_v<K>), "gcd arguments must be integer types");
-        static_assert((!std::is_same_v<std::remove_cv_t<K>, bool>), "gcd arguments must not be bool types" );
+        static_assert(is_integral_v<T>, "gcd arguments must be integer types");
 
         if (a < 0) a = -a;
         if (b < 0) b = -b;
