@@ -1,7 +1,6 @@
 #*
 #* Created by flashbeard.
-#* On 31.12.2021
-#* number-theory
+#* tests
 #*
 
 cmake_minimum_required(VERSION 3.20)

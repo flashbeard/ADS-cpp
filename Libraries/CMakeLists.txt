@@ -1,6 +1,5 @@
 #*
 #* Created by flashbeard.
-#* On 31.12.2021
 #* number-theory
 #*
 
@@ -17,4 +16,3 @@ add_library(NumberTheoryLibrary
         NumberTheory/Algorithms.cpp)
 add_executable(NumberTheoryDemo NumberTheory/main.cpp)
 target_link_libraries(NumberTheoryDemo NumberTheoryLibrary)
-
