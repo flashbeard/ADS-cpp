@@ -28,15 +28,17 @@ namespace funcs {
     }
 
     template<class T, class U>
-    constexpr T power(T a, U n) {
+    constexpr T power(T a, U n, T mod = std::numeric_limits<T>::max()) {
         T result = 1;
 
         while (n) {
             if (n & 1) {
                 result *= a;
+                result %= mod;
                 --n;
             } else {
                 a *= a;
+                a %= mod;
                 n >>= 1;
             }
         }

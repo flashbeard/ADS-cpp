@@ -19,14 +19,14 @@ namespace nt {
 
 #pragma region Power
     template<class T, class U>
-    constexpr T power(T a, U n) {
+    constexpr T power(T a, U n, T mod = std::numeric_limits<T>::max()) {
         static_assert(is_integral_v<T>, "power arguments must be integer types");
 
         if (n < 0) {
             throw std::runtime_error("power exponent must not be negative");
         }
 
-        return funcs::power(a, n);
+        return funcs::power(a, n, mod);
     }
 
     template<class T>
@@ -53,8 +53,53 @@ namespace nt {
         return true;
     }
 
-    // TODO: (DP) - add primality test - Solovay-Strassen - O(k lon^3 n)
-    // https://www.geeksforgeeks.org/primality-test-set-4-solovay-strassen/?ref=lbp
+    template<class T>
+    bool millerPrimalityTest(T d, T n) {
+        T a = 2 + random() % (n - 4);
+        T x = power(a, d, n);
+        if (x == 1  || x == n - 1) return true;
+        while (d != n - 1) {
+            x = (x * x) % n;
+            d *= 2;
+            if (x == 1) return false;
+            if (x == n - 1) return true;
+        }
+        return false;
+    }
+
+    template<class T>
+    bool is_prime_fast(T n) {
+        if (n <= 1 || n == 4)  return false;
+        if (n <= 3) return true;
+        int iterations = log(n) * 2;
+        T d = n - 1;
+        while (d % 2 == 0) d /= 2;
+        for (int i = 0; i < iterations; i++)
+            if (!millerPrimalityTest(d, n)) return false;
+        return true;
+    }
+
+    template<class T>
+    std::vector<T> eratosthenes_sieve(T n) {
+        std::vector<bool> isPrime(n, true);
+        std::vector<T> prime;
+        std::vector<T> SPF(n);
+        isPrime[0] = isPrime[1] = false;
+        for (long long i = 2; i < n; i++) {
+            if (isPrime[i]) {
+                prime.push_back(i);
+                SPF[i] = i;
+            }
+            for (long long j = 0;
+                 j < (int)prime.size() &&
+                 i*prime[j] < n && prime[j] <= SPF[i];
+                 j++) {
+                isPrime[i * prime[j]] = false;
+                SPF[i * prime[j]] = prime[j];
+            }
+        }
+        return prime;
+    }
 #pragma endregion
 
 #pragma region GCD/LCM
@@ -168,6 +213,35 @@ namespace nt {
 
         if (n - 1) {
             result.push_back(n);
+        }
+
+        return result;
+    }
+
+    template<class T>
+    constexpr std::vector<std::pair<T, T>> factorization(T n) {
+        static_assert(is_integral_v<T>, "number must be integer type");
+        static_assert(n >= 0, "number must not be negative");
+
+        if (n <= 1) {
+            return std::vector<std::pair<T, T>>();
+        }
+
+        std::vector<std::pair<T, T>> result;
+
+        T d = 2;
+
+        while (d * d <= n) {
+            if (n % d == 0) result.push_back(std::make_pair(d, 0));
+            while (n % d == 0) {
+                n /= d;
+                ++result.back().second;
+            }
+            d++;
+        }
+
+        if (n - 1) {
+            result.push_back(std::make_pair(n, 1));
         }
 
         return result;

@@ -130,6 +130,21 @@ namespace nt {
             return *lhs * funcs::power(*Modular_m(rhs), mod() - 2);
         }
 
+        // modulo
+        friend Modular operator%(const Modular_m &lhs, const Modular_m &rhs) {
+            return *lhs % *rhs;
+        }
+
+        template<class U>
+        friend Modular operator%(const U &lhs, const Modular_m &rhs) {
+            return *Modular_m(lhs) % *rhs;
+        }
+
+        template<class U>
+        friend Modular operator%(const Modular_m &lhs, const U &rhs) {
+            return *lhs % *Modular_m(rhs);
+        }
+
 #pragma endregion ArithmeticOperators
 
 #pragma region ArithmeticAssignOperators
@@ -144,6 +159,8 @@ template<class U> friend void operator SIGN##=(Modular_m &lhs, const U &rhs) { l
         OP(*)
 
         OP(/)
+
+        OP(%)
 
 #undef OP
 
