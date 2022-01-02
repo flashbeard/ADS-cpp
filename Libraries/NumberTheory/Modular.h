@@ -22,7 +22,7 @@ namespace nt {
 
         using Modular_m = Modular<M>;
 
-        static_assert(is_integral_v<T>, "Modular number must be integer types");
+        static_assert(is_integral_v<T>, "Modular number must be integer type");
 
 #pragma region Constructors
 
