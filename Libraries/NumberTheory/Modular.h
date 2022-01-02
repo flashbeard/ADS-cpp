@@ -54,19 +54,7 @@ namespace nt {
 
         template<class U>
         static T normalize(const U &x) {
-            T value;
-
-            if (-mod() <= x && x < mod()) {
-                value = static_cast<T>(x);
-            } else {
-                value = static_cast<T>(x % mod());
-            }
-
-            if (value < 0) {
-                value += mod();
-            }
-
-            return value;
+            return funcs::normalize(x, mod());
         }
 
         const T &operator*() const {

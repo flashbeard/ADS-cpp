@@ -50,8 +50,6 @@ namespace nt {
 
     template<class T, class U, class K = std::common_type_t<T, U>>
     constexpr K gcd(T a, U b) {
-        // TODO: (DP) - add fold expression - gcd(6, 6, 6, 3, ..., 9) = ...
-
         static_assert(is_integral_v<T>, "gcd arguments must be integer types");
 
         if (a < 0) a = -a;
@@ -62,6 +60,12 @@ namespace nt {
             b %= a;
         }
         return a;
+    }
+
+    // FIXME: Need to be done
+    template<typename ... Args>
+    constexpr auto gcd(Args... a) {
+//        return gcd(a, ...);
     }
 }
 
