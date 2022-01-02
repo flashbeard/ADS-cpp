@@ -134,31 +134,45 @@ namespace nt {
 
 #pragma region ArithmeticAssignOperators
 
-        // plus
-        template<class U>
-        friend void operator+=(Modular_m &lhs, const U &rhs) {
-            lhs = lhs + rhs;
-        }
+#define OP(SIGN) \
+template<class U> friend void operator SIGN##=(Modular_m &lhs, const U &rhs) { lhs = lhs SIGN rhs; }
 
-        // minus
-        template<class U>
-        friend void operator-=(Modular_m &lhs, const U &rhs) {
-            lhs = lhs - rhs;
-        }
+        OP(+)
 
-        // multiply
-        template<class U>
-        friend void operator*=(Modular_m &lhs, const U &rhs) {
-            lhs = lhs * rhs;
-        }
+        OP(-)
 
-        // divide
-        template<class U>
-        friend void operator/=(Modular_m &lhs, const U &rhs) {
-            lhs = lhs / rhs;
-        }
+        OP(*)
+
+        OP(/)
+
+#undef OP
 
 #pragma endregion
+
+#pragma region UnaryOperators
+
+        // unary
+        Modular &operator++() { return *this += 1; }
+
+        Modular &operator--() { return *this -= 1; }
+
+        Modular operator++(int) {
+            Modular_m result(*this);
+            *this += 1;
+            return result;
+        }
+
+        Modular operator--(int) {
+            Modular_m result(*this);
+            *this -= 1;
+            return result;
+        }
+
+        Modular operator-() const {
+            return Modular_m(-m_value);
+        }
+
+#pragma endregion UnaryOPerators
 
 #pragma region ComparisonOperators
 
@@ -167,7 +181,17 @@ friend bool operator SIGN(const Modular_m &lhs, const Modular_m &rhs) { return *
 template<class U>friend bool operator SIGN(const U &lhs, const Modular_m &rhs) { return *Modular_m(lhs) SIGN *rhs; }\
 template<class U>friend bool operator SIGN(const Modular_m &lhs, const U &rhs) { return *lhs SIGN *Modular_m(rhs); }
 
-    OP(==) OP(!=) OP(<) OP(>) OP(<=) OP(>=)
+        OP(==)
+
+        OP(!=)
+
+        OP(<)
+
+        OP(>)
+
+        OP(<=)
+
+        OP(>=)
 
 #undef OP
 

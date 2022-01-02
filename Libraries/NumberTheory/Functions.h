@@ -14,14 +14,14 @@ namespace funcs {
     T normalize(const T &x, const T &mod) {
         T value;
 
-        if (-mod() <= x && x < mod()) {
+        if (-mod <= x && x < mod) {
             value = static_cast<T>(x);
         } else {
-            value = static_cast<T>(x % mod());
+            value = static_cast<T>(x % mod);
         }
 
         if (value < 0) {
-            value += mod();
+            value += mod;
         }
 
         return value;
