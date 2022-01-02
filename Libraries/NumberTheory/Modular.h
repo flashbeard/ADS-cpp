@@ -82,8 +82,7 @@ namespace nt {
 
 #pragma region ArithmeticOperators
 
-        // TODO: add equal ops
-
+        // plus
         friend Modular operator+(const Modular_m &lhs, const Modular_m &rhs) {
             return *lhs - mod() + *rhs;
         }
@@ -98,8 +97,7 @@ namespace nt {
             return *lhs - mod() + *Modular_m(rhs);
         }
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////
-
+        // minus
         friend Modular operator-(const Modular_m &lhs, const Modular_m &rhs) {
             return mod() - *rhs + *lhs;
         }
@@ -114,8 +112,7 @@ namespace nt {
             return mod() - *Modular_m(rhs) + *lhs;
         }
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////
-
+        // multiply
         friend Modular operator*(const Modular_m &lhs, const Modular_m &rhs) {
             return funcs::multiply(*lhs, *rhs, mod());
         }
@@ -130,8 +127,7 @@ namespace nt {
             return funcs::multiply(*lhs, *Modular_m(rhs), mod());
         }
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////
-
+        // divide
         friend Modular operator/(const Modular_m &lhs, const Modular_m &rhs) {
             return *lhs * funcs::power(*rhs, mod() - 2);
         }
@@ -147,6 +143,34 @@ namespace nt {
         }
 
 #pragma endregion ArithmeticOperators
+
+#pragma region ArithmeticAssignOperators
+
+        // plus
+        template<class U>
+        friend void operator+=(Modular_m &lhs, const U &rhs) {
+            lhs = lhs + rhs;
+        }
+
+        // minus
+        template<class U>
+        friend void operator-=(Modular_m &lhs, const U &rhs) {
+            lhs = lhs - rhs;
+        }
+
+        // multiply
+        template<class U>
+        friend void operator*=(Modular_m &lhs, const U &rhs) {
+            lhs = lhs * rhs;
+        }
+
+        // divide
+        template<class U>
+        friend void operator/=(Modular_m &lhs, const U &rhs) {
+            lhs = lhs / rhs;
+        }
+
+#pragma endregion
 
 #pragma region ComparisonOperators
 
