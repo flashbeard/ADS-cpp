@@ -17,6 +17,7 @@
 
 namespace nt {
 
+#pragma region Power
     template<class T, class U>
     constexpr T power(T a, U n) {
         static_assert(is_integral_v<T>, "power arguments must be integer types");
@@ -34,7 +35,9 @@ namespace nt {
 
         return x && !(x & (x - 1));
     }
+#pragma endregion
 
+#pragma region Prime numbers
     template<class T>
     bool is_prime(const T &x) {
         if (x == 2 || x == 3 || x == 5 || x == 7 || x == 11 || x == 13 || x == 17 || x == 23 || x == 29) return true;
@@ -52,7 +55,9 @@ namespace nt {
 
     // TODO: (DP) - add primality test - Solovay-Strassen - O(k lon^3 n)
     // https://www.geeksforgeeks.org/primality-test-set-4-solovay-strassen/?ref=lbp
+#pragma endregion
 
+#pragma region GCD/LCM
     template<class U, class... Args, class K = std::common_type_t<U, Args...>>
     constexpr K gcd(U a, Args &&...args) {
         static_assert((is_integral_v<std::remove_reference_t<decltype(args)>> && ... && is_integral_v<U>),
@@ -71,34 +76,103 @@ namespace nt {
         return result;
     }
 
-    template<auto M, class T>
-    constexpr void compute_factorials(std::vector<Modular<M>> &fact, T &cnt) {
-        fact.assign(cnt + 1);
-        for (T i = 1; i <= cnt; ++i) {
-            fact[i] = fact[i - 1] * i;
+#pragma endregion
+
+#pragma region Factorials
+
+    static std::vector<Mint> factorials;
+    static std::vector<Mint> inv_factorials;
+
+    template<class T>
+    constexpr void compute_factorials(T n) {
+        factorials.resize(n + 1);
+        T have = factorials.size();
+        for (T i = have; i <= n; ++i) {
+            factorials[i] = i * factorials[i - 1];
         }
     }
 
-    template<auto M, class T>
-    constexpr void compute_factorials(std::vector<Modular<M>> &fact, std::vector<Modular<M>> &inv, T &cnt) {
-        factorials(fact, cnt);
-        inv.assign(cnt + 1);
-        for (T i = 0; i <= cnt; ++i) {
-            inv[i] = power(fact[i], Modular<M>().mod() - 2);
+    template<class T>
+    constexpr void compute_inv_factorials(T n) {
+        compute_factorials(n);
+        inv_factorials.resize(n + 1);
+        T have = inv_factorials.size();
+        for (T i = have; i <= n; ++i) {
+            inv_factorials[i] = power(factorials[i], Mint().mod() - 2);
         }
     }
 
-    template<auto M, class T>
-    constexpr void compute_combinations(std::vector<std::vector<Modular<M>>> &combinations, T &cnt) {
-        combinations.assign(cnt, std::vector(cnt, 0));
-        for (T n = 0; n <= cnt; ++n) {
-            combinations[n][0] = 1;
-            combinations[n][n] = 1;
-            for (T k = 1; k < n; ++k) {
-                combinations[n - 1][k] + combinations[n - 1][k - 1];
+    template<class T>
+    constexpr Mint factorial(T n) {
+        compute_factorials(n);
+        return factorials[n];
+    }
+
+    template<class T>
+    constexpr Mint inv_factorial(T n) {
+        compute_inv_factorials(n);
+        return inv_factorials[n];
+    }
+
+#pragma endregion
+
+#pragma region Combinatorics
+    template<class T>
+    constexpr Mint combinations(T n, T k) {
+        return k < 0 || k > n ? 0 : factorial(n) * inv_factorial(k) * inv_factorials(n - k);
+    }
+
+#pragma endregion
+
+#pragma region Factorization
+
+    template<class T>
+    constexpr std::vector<T> all_divisors(T n) {
+        static_assert(is_integral_v<T>, "number must be integer type");
+        static_assert(n >= 0, "number must not be negative");
+
+        if (n == 0) {
+            return std::vector<T>(1, 1);
+        }
+
+        std::vector<T> result;
+
+        for (T d = 1; d * d <= n; ++d) {
+            if (n % d == 0) {
+                result.push_back(d);
+                if (d * d != n) {
+                    result.push_back(abs(n / d));
+                }
             }
         }
     }
+
+    template<class T>
+    constexpr std::vector<T> prime_divisors(T n) {
+        static_assert(is_integral_v<T>, "number must be integer type");
+        static_assert(n >= 0, "number must not be negative");
+
+        if (n <= 1) {
+            return std::vector<T>();
+        }
+
+        std::vector<T> result;
+
+        T d = 2;
+
+        while (d * d <= n) {
+            if (n % d == 0) result.push_back(d);
+            while (n % d == 0) n /= d;
+            d++;
+        }
+
+        if (n - 1) {
+            result.push_back(n);
+        }
+
+        return result;
+    }
+#pragma endregion
 }
 
 #endif //TEST_ALGORITHMS_H

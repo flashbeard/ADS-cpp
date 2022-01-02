@@ -223,4 +223,7 @@ template<class U>friend bool operator SIGN(const Modular_m &lhs, const U &rhs) {
 
 }
 
+constexpr long long modularLongLong = 1000000007;
+using Mint = nt::Modular<modularLongLong>;
+
 #endif //TEST_MODULAR_H
