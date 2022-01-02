@@ -9,6 +9,7 @@
 #include <type_traits>
 #include <iostream>
 
+#include "Functions.h"
 #include "nt_type_traits.h"
 
 namespace nt {
@@ -68,7 +69,7 @@ namespace nt {
             return value;
         }
 
-        const T &operator()() const {
+        const T &operator*() const {
             return m_value;
         }
 
@@ -81,59 +82,82 @@ namespace nt {
 
 #pragma region ArithmeticOperators
 
-        Modular operator+(Modular_m &other) {
-            T value = this->m_value + other.m_value;
-            return normalize(value);
+        // TODO: add equal ops
+
+        friend Modular operator+(const Modular_m &lhs, const Modular_m &rhs) {
+            return *lhs - mod() + *rhs;
         }
 
-        void operator+=(Modular_m &other) {
-            this = this + other;
+        template<class U>
+        friend Modular operator+(const U &lhs, const Modular_m &rhs) {
+            return *Modular_m(lhs) - mod() + *rhs;
         }
 
-        Modular operator-(Modular_m &other) {
-            T value = this->m_value - other.m_value;
-            return normalize(value);
+        template<class U>
+        friend Modular operator+(const Modular_m &lhs, const U &rhs) {
+            return *lhs - mod() + *Modular_m(rhs);
         }
 
-        void operator-=(Modular_m &other) {
-            this = this - other;
+        ////////////////////////////////////////////////////////////////////////////////////////////////
+
+        friend Modular operator-(const Modular_m &lhs, const Modular_m &rhs) {
+            return mod() - *rhs + *lhs;
         }
 
-        Modular operator*(Modular_m &other) {
-            T result = 0;
-            T a = this->m_value;
-            T b = other.m_value;
-            while (b) {
-                if (b & 1) {
-                    result += a;
-                    result %= mod();
-                }
-                b >>= 1;
-                if (a < mod() - a) {
-                    a <<= 1;
-                } else {
-                    a -= (mod() - a);
-                }
-            }
-            return result;
+        template<class U>
+        friend Modular operator-(const U &lhs, const Modular_m &rhs) {
+            return mod() - *rhs + *Modular_m(lhs);
         }
 
-        void operator*=(Modular_m &other) {
-            this = this * other;
+        template<class U>
+        friend Modular operator-(const Modular_m &lhs, const U &rhs) {
+            return mod() - *Modular_m(rhs) + *lhs;
         }
 
-        Modular operator/(Modular_m &other) {
-            // this * (other ^ (mod() - 2))
+        ////////////////////////////////////////////////////////////////////////////////////////////////
+
+        friend Modular operator*(const Modular_m &lhs, const Modular_m &rhs) {
+            return funcs::multiply(*lhs, *rhs, mod());
         }
 
-        void operator/=(Modular_m &other) {
-            this = this / other;
+        template<class U>
+        friend Modular operator*(const U &lhs, const Modular_m &rhs) {
+            return funcs::multiply(*Modular_m(lhs), *rhs, mod());
+        }
+
+        template<class U>
+        friend Modular operator*(const Modular_m &lhs, const U &rhs) {
+            return funcs::multiply(*lhs, *Modular_m(rhs), mod());
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////
+
+        friend Modular operator/(const Modular_m &lhs, const Modular_m &rhs) {
+            return *lhs * funcs::power(*rhs, mod() - 2);
+        }
+
+        template<class U>
+        friend Modular operator/(const U &lhs, const Modular_m &rhs) {
+            return *Modular_m(lhs) * funcs::power(*rhs, mod() - 2);
+        }
+
+        template<class U>
+        friend Modular operator/(const Modular_m &lhs, const U &rhs) {
+            return *lhs * funcs::power(*Modular_m(rhs), mod() - 2);
         }
 
 #pragma endregion ArithmeticOperators
 
 #pragma region ComparisonOperators
 
+#define OP(SIGN) \
+friend bool operator SIGN(const Modular_m &lhs, const Modular_m &rhs) { return *lhs SIGN *rhs; }\
+template<class U>friend bool operator SIGN(const U &lhs, const Modular_m &rhs) { return *Modular_m(lhs) SIGN *rhs; }\
+template<class U>friend bool operator SIGN(const Modular_m &lhs, const U &rhs) { return *lhs SIGN *Modular_m(rhs); }
+
+    OP(==) OP(!=) OP(<) OP(>) OP(<=) OP(>=)
+
+#undef OP
 
 #pragma endregion ComparisonOperators
 

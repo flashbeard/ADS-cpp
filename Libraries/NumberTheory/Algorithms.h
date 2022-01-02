@@ -10,32 +10,21 @@
 #include <numeric>
 #include <algorithm>
 
+#include "Functions.h"
 #include "Modular.h"
 #include "nt_type_traits.h"
 
 namespace nt {
 
-    template<class T, class U, class K = std::common_type_t<T, U>>
-    constexpr K power(T a, U n) {
-        static_assert(is_integral_v<K>, "power arguments must be integer types");
+    template<class T, class U>
+    constexpr T power(T a, U n) {
+        static_assert(is_integral_v<T>, "power arguments must be integer types");
 
         if (n < 0) {
             throw std::runtime_error("power exponent must not be negative");
         }
 
-        K result = 1;
-
-        while (n) {
-            if (n % 2) {
-                result *= a;
-                --n;
-            } else {
-                a *= a;
-                n /= 2;
-            }
-        }
-
-        return result;
+        return funcs::power(a, n);
     }
 
     template<class T>
