@@ -7,6 +7,7 @@
 
 #include <type_traits>
 #include <iostream>
+#include <vector>
 
 #include "nt_type_traits.h"
 

@@ -9,6 +9,7 @@
 #include <type_traits>
 #include <numeric>
 #include <algorithm>
+#include <vector>
 
 #include "Functions.h"
 #include "Modular.h"
@@ -37,7 +38,9 @@ namespace nt {
     template<class T>
     bool is_prime(const T &x) {
         if (x == 2 || x == 3 || x == 5 || x == 7 || x == 11 || x == 13 || x == 17 || x == 23 || x == 29) return true;
-        if (!(x % 2) || !(x % 3) || !(x % 5) || !(x % 7) || !(x % 11) || !(x % 13) || !(x % 17) || !(x % 23) || !(x % 29)) return false;
+        if (!(x % 2) || !(x % 3) || !(x % 5) || !(x % 7) || !(x % 11) || !(x % 13) || !(x % 17) || !(x % 23) ||
+            !(x % 29))
+            return false;
         if (x < 30 || (x & 1) == 0) return false;
         T d = 31;
         while (d * d <= x) {
@@ -50,36 +53,22 @@ namespace nt {
     // TODO: (DP) - add primality test - Solovay-Strassen - O(k lon^3 n)
     // https://www.geeksforgeeks.org/primality-test-set-4-solovay-strassen/?ref=lbp
 
-    template<class T, class U, class K = std::common_type_t<T, U>>
-    constexpr K gcd(T a, U b) {
-        static_assert(is_integral_v<T>, "gcd arguments must be integer types");
-
-        if (a < 0) a = -a;
-        if (b < 0) b = -b;
-        while (b) {
-            a %= b;
-            if (!a) return b;
-            b %= a;
-        }
-        return a;
+    template<class U, class... Args, class K = std::common_type_t<U, Args...>>
+    constexpr K gcd(U a, Args &&...args) {
+        static_assert((is_integral_v<std::remove_reference_t<decltype(args)>> && ... && is_integral_v<U>),
+                      "gcd arguments must be integer types");
+        K result = a;
+        (funcs::gcd(result, std::forward<Args>(args)), ...);
+        return result;
     }
 
-    template<class T, class U, class K = std::common_type_t<T, U>>
-    constexpr K lcm(T a, U b) {
-        static_assert(is_integral_v<T>, "lcm arguments must be integer types");
-        
-        return a / gcd(a, b) * b;
-    }
-
-    // FIXME: Need to be done
-    template<typename ... Args>
-    constexpr auto gcd(Args... a) {
-//        return gcd(a, ...);
-    }
-
-    template<typename ... Args>
-    constexpr auto lcm(Args... a) {
-//        return lcm(a, ...);
+    template<class U, class... Args, class K = std::common_type_t<U, Args...>>
+    constexpr K lcm(U a, Args &&...args) {
+        static_assert((is_integral_v<std::remove_reference_t<decltype(args)>> && ... && is_integral_v<U>),
+                      "lcm arguments must be integer types");
+        K result = a;
+        (funcs::lcm(result, std::forward<Args>(args)), ...);
+        return result;
     }
 
     template<auto M, class T>

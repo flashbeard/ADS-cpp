@@ -37,4 +37,5 @@ int main() {
 //    std::cout << nt::power(static_cast<Mint>(5), 2) << std::endl; // 12 - true
 //    std::cout << static_cast<Mint>(5) / static_cast<Mint>(2) << std::endl; // 9 - true
 
+    std::cout << nt::gcd(16, 8, 24, 20) << ' ' << nt::lcm(16, 8, 24, 20) << std::endl; // 4 240 - true
 }

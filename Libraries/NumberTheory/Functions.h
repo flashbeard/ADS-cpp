@@ -77,6 +77,32 @@ namespace funcs {
         return result;
     }
 
+    template<class T, class U>
+    constexpr void gcd(T &a, U b) {
+        if (!a && !b) {
+            a = 1;
+        } else {
+            if (a < 0) a = -a;
+            if (b < 0) b = -b;
+            while (b) {
+                a %= b;
+                if (!a) {
+                    a = b;
+                    break;
+                }
+                b %= a;
+            }
+        }
+    }
+
+    template<class T, class U>
+    constexpr void lcm(T &a, U b) {
+        T _a = a;
+        gcd(_a, b);
+        a /= _a;
+        a *= b;
+    }
+
 }
 
 #endif //ADS_CPP_FUNCTIONS_H
