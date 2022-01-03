@@ -8,5 +8,4 @@
 #include <cassert>
 
 int main() {
-
 }
