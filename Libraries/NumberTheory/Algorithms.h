@@ -147,14 +147,14 @@ namespace nt {
         }
     }
 
-    template<class T>
-    constexpr Mint factorial(T n) {
+    template<auto M, class T>
+    constexpr Modular<M> factorial(T n) {
         compute_factorials(n);
         return factorials[n];
     }
 
-    template<class T>
-    constexpr Mint inv_factorial(T n) {
+    template<auto M, class T>
+    constexpr Modular<M> inv_factorial(T n) {
         compute_inv_factorials(n);
         return inv_factorials[n];
     }
@@ -162,8 +162,8 @@ namespace nt {
 #pragma endregion
 
 #pragma region Combinatorics
-    template<class T>
-    constexpr Mint combinations(T n, T k) {
+    template<auto M, class T>
+    constexpr Modular<M> combinations(T n, T k) {
         return k < 0 || k > n ? 0 : factorial(n) * inv_factorial(k) * inv_factorials(n - k);
     }
 
