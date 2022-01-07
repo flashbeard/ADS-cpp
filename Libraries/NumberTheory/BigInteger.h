@@ -32,8 +32,8 @@ namespace nt {
 
     class BigInteger {
     public:
-        constexpr static int8_t BASE_DIGITS = 19;
-        constexpr static int64_t BASE = 1e18;
+        constexpr static short BASE_DIGITS = 9;
+        constexpr static int BASE = 1e9;
 
         // TODO: refactor class methods
         // TODO: create sqrt overload
@@ -53,8 +53,16 @@ namespace nt {
 
         BigInteger(const BigInteger &other) noexcept: val(other.val), is_negative(other.is_negative) {}
 
+        BigInteger(BigInteger &&other) noexcept: val(std::move(other.val)), is_negative(other.is_negative) {}
+
         BigInteger &operator=(const BigInteger &other) noexcept {
             val = other.val;
+            is_negative = other.is_negative;
+            return *this;
+        }
+
+        BigInteger &operator=(BigInteger &&other) noexcept {
+            val = std::move(other.val);
             is_negative = other.is_negative;
             return *this;
         }
@@ -71,6 +79,10 @@ namespace nt {
             while (x) {
                 val.push_back(x % BASE);
                 x /= BASE;
+            }
+
+            if (val.empty()) {
+                val.push_back(0);
             }
 
             return *this;
@@ -151,6 +163,7 @@ namespace nt {
                 x.val.push_back(res);
             }
 
+            x.trim();
             return in;
         }
 
@@ -161,7 +174,7 @@ namespace nt {
                 if (x.is_negative && !x.is_zero()) {
                     out << '-';
                 }
-                for (int i = static_cast<int>((*x).size()) - 1; i >= 0; --i) {
+                for (int i = static_cast<int>(x.size()) - 1; i >= 0; --i) {
                     out << x.val[i];
                 }
             }
@@ -173,11 +186,13 @@ namespace nt {
         BigInteger operator-() const noexcept {
             auto t = *this;
 
-            if (t == 0) {
+            if (t.is_zero()) {
                 return t;
             }
 
+            std::cout << t.is_negative << std::endl;
             t.is_negative = !is_negative;
+            std::cout << t.is_negative << std::endl;
             return t;
         }
 
@@ -346,13 +361,14 @@ namespace nt {
         }
 
         BigInteger operator*(const BigInteger &v) const {
-            // TODO: 3 types of multiplication
-            return {};
+            return __simple_multiply(*this, v);
+            // TODO: 2 types of multiplication
+//            return {};
         }
 
         [[nodiscard]] BigInteger abs() const noexcept {
             auto result = *this;
-            result.is_negative = !result.is_negative;
+            result.is_negative = false;
             return result;
         }
 
@@ -369,7 +385,7 @@ namespace nt {
             if (x.val.size() != y.val.size()) {
                 return x.val.size() < y.val.size() ? -1 : 1;
             }
-            for (int i = static_cast<int>((*x).size()) - 1; i >= 0; --i) {
+            for (int i = static_cast<int>(x.size()) - 1; i >= 0; --i) {
                 if (x.val[i] != y.val[i]) {
                     return x.val[i] < y.val[i] ? -1 : 1;
                 }
@@ -379,11 +395,11 @@ namespace nt {
 
         // works only with absolute values
         void __internal_add(const BigInteger &x) noexcept {
-            for (size_t i = 0, carry = 0; i < std::max(val.size(), x.val.size()) || carry; ++i) {
+            for (size_t i = 0, carry = 0; i < std::max((*this).size(), x.size()) || carry; ++i) {
                 if (i == val.size()) {
                     val.push_back(0);
                 }
-                val[i] += carry + (i < x.val.size() ? x.val[i] : 0);
+                val[i] += static_cast<int>(carry) + (i < x.size() ? x.val[i] : 0);
                 carry = val[i] >= BASE;
                 if (carry) {
                     val[i] -= BASE;
@@ -393,8 +409,8 @@ namespace nt {
 
         // works only with absolute values
         void __internal_sub(const BigInteger &x) noexcept {
-            for (size_t i = 0, carry = 0; i < x.val.size() || carry; ++i) {
-                val[i] -= carry + (i < x.val.size() ? x.val[i] : 0);
+            for (size_t i = 0, carry = 0; i < x.size() || carry; ++i) {
+                val[i] -= static_cast<int>(carry) + (i < x.val.size() ? x.val[i] : 0);
                 carry = val[i] < 0;
                 if (carry) {
                     val[i] += BASE;
@@ -403,23 +419,38 @@ namespace nt {
             trim();
         }
 
+        [[nodiscard]] BigInteger __simple_multiply(const BigInteger &a, const BigInteger &b) const {
+            BigInteger result;
+            result.is_negative = a.is_negative | b.is_negative;
+            result.resize(a.size() + b.size());
+            for (size_t i = 0; i < a.size(); ++i)
+                if (a[i])
+                    for (size_t j = 0, carry = 0; j < b.size() || carry; ++j) {
+                        auto cur = result[i + j] + a[i] * (j < static_cast<int>(b.size()) ? b[j] : 0) + carry;
+                        carry = static_cast<int>(cur / BASE);
+                        result[i + j] = static_cast<int>(cur % BASE);
+                    }
+            result.trim();
+            return result;
+        }
+
         friend std::pair<BigInteger, BigInteger> divmod(const BigInteger &_a, const BigInteger &_b) {
             if (_b <= 0) {
                 throw std::invalid_argument("Operator % is defined only for positive numbers.");
             }
 
-            int64_t norm = BASE / ((*_b).back() + 1);
+            int64_t norm = BASE / (_b.back() + 1);
             BigInteger a = std::abs(_a) * norm;
             BigInteger b = std::abs(_b) * norm;
             BigInteger q = 0, r = 0;
-            q.resize((*a).size());
+            q.resize(a.size());
 
-            for (int i = static_cast<int>((*a).size()) - 1; i >= 0; --i) {
+            for (int i = static_cast<int>(b.size()) - 1; i >= 0; --i) {
                 r *= BASE;
                 r += a[i];
-                int64_t s1 = (*r).size() <= (*b).size() ? 0 : r[static_cast<int>((*b).size())];
-                int64_t s2 = (*r).size() <= (*b).size() - 1 ? 0 : r[static_cast<int>((*b).size()) - 1];
-                int64_t d = (static_cast<int64_t>(BASE) * s1 + s2) / (*b).back();
+                long long s1 = r.size() <= b.size() ? 0 : r[static_cast<int>(b.size())];
+                long long s2 = r.size() <= b.size() - 1 ? 0 : r[static_cast<int>(b.size()) - 1];
+                long long d = (static_cast<long long>(BASE) * s1 + s2) / b.back();
                 r -= b * d;
                 while (r < 0) {
                     r += b, --d;
@@ -451,29 +482,33 @@ namespace nt {
             return val.empty() || val.size() == 1 && val[0] == 0;
         }
 
-        std::vector<int64_t> &operator*() noexcept {
-            return val;
-        }
-
-        const std::vector<int64_t> &operator*() const noexcept {
-            return val;
-        }
-
         void resize(const size_t &n) {
             val.resize(n);
         }
 
-        int64_t &operator[](size_t i) {
+        [[nodiscard]] size_t size() const noexcept {
+            return val.size();
+        }
+
+        int &back() noexcept {
+            return val.back();
+        }
+
+        [[nodiscard]] const int &back() const noexcept {
+            return val.back();
+        }
+
+        int &operator[](size_t i) {
             return val[i];
         }
 
-        const int64_t &operator[](size_t i) const {
+        const int &operator[](size_t i) const {
             return val[i];
         }
 
 #pragma endregion MiscFunctions
 
-        std::vector<int64_t> val;
+        std::vector<int> val;
         bool is_negative;
     };
 
