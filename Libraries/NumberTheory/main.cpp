@@ -9,6 +9,8 @@
 
 #include "Everything.h"
 
+typedef nt::BigInteger Bint;
+
 int main() {
 
 }
