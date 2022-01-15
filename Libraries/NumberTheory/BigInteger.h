@@ -16,6 +16,7 @@
 #include <utility>
 #include <cassert>
 #include <stdexcept>
+#include <iomanip>
 
 #include "nt_type_traits.h"
 
@@ -168,14 +169,16 @@ namespace nt {
         }
 
         friend std::ostream &operator<<(std::ostream &out, const BigInteger &x) {
-            if (x.val.empty()) {
+            if (x.is_zero()) {
                 out << 0;
             } else {
                 if (x.is_negative && !x.is_zero()) {
                     out << '-';
                 }
-                for (int i = static_cast<int>(x.size()) - 1; i >= 0; --i) {
-                    out << x.val[i];
+                out << x.back();
+                out << std::setfill('0');
+                for (int i = static_cast<int>(x.size()) - 2; i >= 0; --i) {
+                    out << std::setw(BASE_DIGITS) << x[i];
                 }
             }
             return out;
@@ -190,9 +193,7 @@ namespace nt {
                 return t;
             }
 
-            std::cout << t.is_negative << std::endl;
             t.is_negative = !is_negative;
-            std::cout << t.is_negative << std::endl;
             return t;
         }
 
@@ -327,14 +328,14 @@ namespace nt {
                 x = -x;
             }
 
-            int64_t carry = 0;
-            for (int i = 0; i < val.size() || carry; ++i) {
+            int carry = 0;
+            for (size_t i = 0; i < val.size() || carry; ++i) {
                 if (i == val.size()) {
                     val.push_back(0);
                 }
-                int64_t cur = val[i] * x + carry;
-                carry = cur / BASE;
-                val[i] = cur % BASE;
+                long long cur = static_cast<long long>(val[i]) * x + carry;
+                carry = static_cast<int>(cur / BASE);
+                val[i] = static_cast<int>(cur % BASE);
             }
             trim();
         }
@@ -349,11 +350,11 @@ namespace nt {
         }
 
         BigInteger operator/(const BigInteger &x) const {
-            return divmod(*this, x).first;
+            return __divmod(*this, x).first;
         }
 
         BigInteger operator%(const BigInteger &x) const {
-            return divmod(*this, x).second;
+            return __divmod(*this, x).second;
         }
 
         void operator*=(const BigInteger &v) {
@@ -419,22 +420,25 @@ namespace nt {
             trim();
         }
 
-        [[nodiscard]] BigInteger __simple_multiply(const BigInteger &a, const BigInteger &b) const {
+        friend BigInteger __simple_multiply(const BigInteger &a, const BigInteger &b) {
             BigInteger result;
             result.is_negative = a.is_negative | b.is_negative;
             result.resize(a.size() + b.size());
-            for (size_t i = 0; i < a.size(); ++i)
-                if (a[i])
-                    for (size_t j = 0, carry = 0; j < b.size() || carry; ++j) {
-                        auto cur = result[i + j] + a[i] * (j < static_cast<int>(b.size()) ? b[j] : 0) + carry;
+            for (size_t i = 0; i < a.size(); ++i) {
+                if (a[i]) {
+                    int carry = 0;
+                    for (size_t j = 0; j < b.size() || carry; ++j) {
+                        long long cur = result[i + j] + static_cast<long long>(a[i]) * (j < static_cast<int>(b.size()) ? b[j] : 0) + carry;
                         carry = static_cast<int>(cur / BASE);
                         result[i + j] = static_cast<int>(cur % BASE);
                     }
+                }
+            }
             result.trim();
             return result;
         }
 
-        friend std::pair<BigInteger, BigInteger> divmod(const BigInteger &_a, const BigInteger &_b) {
+        friend std::pair<BigInteger, BigInteger> __divmod(const BigInteger &_a, const BigInteger &_b) {
             if (_b <= 0) {
                 throw std::invalid_argument("Operator % is defined only for positive numbers.");
             }
