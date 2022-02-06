@@ -32,11 +32,11 @@ namespace std {
 namespace std {
     template<>
     struct numeric_limits<nt::BigInteger> {
-        static _GLIBCXX_CONSTEXPR short
-        min() _GLIBCXX_USE_NOEXCEPT { return 1; }
+        static constexpr short
+        min() noexcept { return 1; }
 
-        static _GLIBCXX_CONSTEXPR short
-        max() _GLIBCXX_USE_NOEXCEPT { return -1; }
+        static constexpr short
+        max() noexcept { return -1; }
     };
 }
 
