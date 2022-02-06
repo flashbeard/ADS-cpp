@@ -55,7 +55,7 @@ namespace nt {
 
     template<class T>
     bool millerPrimalityTest(T d, T n) {
-        T a = 2 + random() % (n - 4);
+        T a = 2 + std::rand() % (n - 4);
         T x = power(a, d, n);
         if (x == 1  || x == n - 1) return true;
         while (d != n - 1) {
