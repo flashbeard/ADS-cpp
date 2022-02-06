@@ -15,6 +15,10 @@ add_library(NumberTheoryLibrary
         NumberTheory/Algorithms.h
         NumberTheory/Algorithms.cpp
         NumberTheory/nt_type_traits.h
-        NumberTheory/Functions.h NumberTheory/Big.cpp NumberTheory/Big.h NumberTheory/Graph.cpp NumberTheory/Graph.h)
+        NumberTheory/Graph.cpp
+        NumberTheory/Graph.h
+        NumberTheory/Functions.h
+        NumberTheory/BigInteger.h
+        NumberTheory/BigInteger.cpp)
 add_executable(NumberTheoryDemo NumberTheory/main.cpp)
 target_link_libraries(NumberTheoryDemo NumberTheoryLibrary)
