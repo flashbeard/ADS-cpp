@@ -16,18 +16,23 @@ class Graph {
 public:
     Graph() = default;
 
+    // add 2 edges (from-to) and (to-from)
     virtual void addEdge(const T &from, const T  &to) {
         mData[from][to] = mData[to][from] = U();
     }
 
+    // add 2 edges (from-to) and (to-from), both with weight w
     virtual void addEdge(const T &from, const T  &to, const U &w) {
         mData[from][to] = mData[to][from] = w;
     }
 
+    // check whether the graph has vertex v
     bool hasVertex(const T &v) {
         return mData.count(v) != 0;
     }
 
+    // functional to get and set the weight for edge (from-to)
+    // throws an exception if given edge is missing
     U &operator()(const T &from, const T &to) {
         if (!hasVertex(from) || !hasVertex(to)) {
             std::stringstream ss;
@@ -41,6 +46,7 @@ public:
         return this(from, to);
     }
 
+    // returns the set of all the graph's vertexes
     std::unordered_set<T> getVertexesSet() {
         std::unordered_set<T> result;
 
@@ -54,6 +60,7 @@ public:
         return result;
     }
 
+    // returns the set of all the vertex' neighbors
     std::unordered_set<T> getNeighborsSet(const T &from) {
         std::unordered_set<T> result;
 
@@ -64,6 +71,7 @@ public:
         return result;
     }
 
+    // ofstream output operator
     friend std::ostream &operator<<(std::ostream &out, const Graph &g) {
         for (const auto &[from, adjaecencyMap]: g.mData) {
             out << from << ": [ ";
