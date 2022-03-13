@@ -1,4 +1,4 @@
-#include "NumberTheory/Everything.h"
+#include "Everything.h"
 
 int main() {
 
