@@ -1,11 +1,5 @@
-#*
-#* Created by flashbeard.
-#* On 31.12.2021
-#* number-theory
-#*
-
-cmake_minimum_required(VERSION 3.20)
-project(TEST)
+cmake_minimum_required(VERSION 3.0.0)
+project(ADS-cpp)
 
 set(CMAKE_CXX_STANDARD 17)
 
