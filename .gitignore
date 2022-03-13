@@ -1,4 +1,8 @@
-# IDE files
+# VScode
+.vscode
+build
+
+# CLion files
 .idea
 cmake-build-debug
 cmake-build-release
