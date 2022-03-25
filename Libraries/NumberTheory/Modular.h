@@ -49,10 +49,6 @@ public:
         return *this;
     }
 
-    Modular(Modular &&other) noexcept = default;
-
-    Modular &operator=(Modular &&other) noexcept = default;
-
     template<class U>
     Modular(const U &x)
     {
